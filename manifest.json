@@ -2,7 +2,7 @@
   "id": "frontmatter-readonly",
   "name": "Frontmatter Read-Only",
   "version": "0.1.0",
-  "minAppVersion": "1.0.0",
+  "minAppVersion": "1.4.0",
   "description": "Mark a note read-only by adding `readonly: true` to its frontmatter. Blocks edits inside the Obsidian editor — toggle via command, file menu, editor menu, or status bar.",
   "author": "Ravi Both",
   "authorUrl": "https://raviboth.com",

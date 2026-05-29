@@ -8,8 +8,13 @@ import {
 	Setting,
 	TFile,
 } from "obsidian";
-import { Compartment } from "@codemirror/state";
+import { Compartment, EditorState } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
+
+const readOnlyExtension = (readonly: boolean) => [
+	EditorState.readOnly.of(readonly),
+	EditorView.editable.of(!readonly),
+];
 
 interface FrontmatterReadonlySettings {
 	propertyName: string;
@@ -28,7 +33,7 @@ export default class FrontmatterReadonlyPlugin extends Plugin {
 		await this.loadSettings();
 
 		this.registerEditorExtension(
-			this.editableCompartment.of(EditorView.editable.of(true))
+			this.editableCompartment.of(readOnlyExtension(false))
 		);
 
 		this.statusBar = this.addStatusBarItem();
@@ -76,7 +81,8 @@ export default class FrontmatterReadonlyPlugin extends Plugin {
 
 		this.registerEvent(
 			this.app.workspace.on("editor-menu", (menu: Menu, _editor, view) => {
-				const file = (view as MarkdownView).file;
+				if (!(view instanceof MarkdownView)) return;
+				const file = view.file;
 				if (!file || file.extension !== "md") return;
 				const ro = this.isReadonly(file);
 				menu.addItem((item) =>
@@ -135,27 +141,28 @@ export default class FrontmatterReadonlyPlugin extends Plugin {
 			if (view.file?.path !== file.path) return;
 			const cm = (view.editor as unknown as { cm: EditorView }).cm;
 			if (!cm) return;
-			cm.dispatch({
-				effects: this.editableCompartment.reconfigure(
-					EditorView.editable.of(!readonly)
-				),
-			});
+			try {
+				cm.dispatch({
+					effects: this.editableCompartment.reconfigure(
+						readOnlyExtension(readonly)
+					),
+				});
+			} catch (e) {
+				console.error("[frontmatter-readonly] dispatch failed", e);
+			}
 		});
 	}
 
 	private updateStatusBar(file: TFile | null) {
-		if (!file || file.extension !== "md") {
-			this.statusBar.empty();
-			return;
-		}
-		if (this.isReadonly(file)) {
-			this.statusBar.setText("🔒 Read-only");
-			this.statusBar.setAttr("title", "Click to make editable");
-			this.statusBar.style.cursor = "pointer";
-		} else {
+		if (!file || file.extension !== "md" || !this.isReadonly(file)) {
 			this.statusBar.empty();
 			this.statusBar.removeAttribute("title");
+			this.statusBar.style.cursor = "";
+			return;
 		}
+		this.statusBar.setText("🔒 Read-only");
+		this.statusBar.setAttr("title", "Click to make editable");
+		this.statusBar.style.cursor = "pointer";
 	}
 
 	private async toggle(file: TFile) {
