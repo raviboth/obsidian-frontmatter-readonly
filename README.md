@@ -69,7 +69,16 @@ npm install
 npm run dev   # watch build → main.js
 ```
 
-Symlink the repo into a test vault's `.obsidian/plugins/frontmatter-readonly/` for live reload.
+### Install into a vault
+
+Use the bundled `install.sh` — it builds, then copies `main.js` + `manifest.json` into a vault's plugin folder. Runtime-only, no source clutter:
+
+```bash
+./install.sh                    # installs to $HOME/obsidian
+./install.sh /path/to/vault     # installs to a specific vault
+```
+
+> ⚠ Don't symlink the repo into a synced vault (Syncthing, iCloud, etc.). The sync agent will resolve the symlink and propagate `node_modules/` + source files across machines, which can hang or break Obsidian on the other end. The runtime-only copy from `install.sh` is safe.
 
 ## License
 
