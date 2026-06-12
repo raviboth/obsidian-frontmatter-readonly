@@ -6,6 +6,49 @@ Reference: <https://docs.obsidian.md/Plugins/Releasing/Submission+requirements+f
 
 ---
 
+## 👉 Pick up here
+
+**Status as of last session:** Plugin built, repo public at <https://github.com/raviboth/obsidian-frontmatter-readonly>, installed in Mac vault via `install.sh`, smoke-tested, crash fix shipped, stable.
+
+**Next concrete action — cut the 0.1.0 BRAT release:**
+
+```bash
+cd ~/repos/obsidian-frontmatter-readonly
+git tag 0.1.0
+git push origin 0.1.0
+gh release create 0.1.0 main.js manifest.json \
+  --title "v0.1.0 — initial beta" \
+  --notes "First beta release. Mark notes read-only via \`readonly: true\` frontmatter. Toggle via command, file/editor right-click, or status bar.
+
+**Known scope:**
+- Blocks edits inside Obsidian only (not external editors). Use \`chmod 444\` for OS-level lock.
+- Strict \`=== true\` check (no truthy YAML like \`yes\`/\`1\`).
+- Requires Obsidian 1.4.0+.
+
+Install via BRAT: command palette → \"BRAT: Add a beta plugin for testing\" → paste \`raviboth/obsidian-frontmatter-readonly\`. Feedback welcome."
+```
+
+**After that — self-dogfood for ~3-7 days:**
+- Install via BRAT in a throwaway vault to confirm release assets resolve correctly
+- Use it on your real notes (state mirrors, garmin output) to find friction
+- Note any bugs / UX gaps for 0.1.1
+
+**Then — 30-min polish batch before forum post:**
+- [ ] Screenshot or GIF of plugin in action (status bar 🔒 + right-click menu + settings)
+- [ ] `CHANGELOG.md` w/ 0.1.0 entry
+- [ ] GH repo About blurb + topics (`obsidian`, `obsidian-plugin`, `readonly`, `frontmatter`) via `gh repo edit`
+- [ ] README hero quote / use case near top
+
+**Then — forum + Discord post (0.1.1 ideally, but 0.1.0 OK):**
+- Forum: <https://forum.obsidian.md/c/share-showcase/9>
+- Discord: Obsidian official → `#share` or `#plugin-dev`
+- Both posts: title, what+why, screenshot, BRAT install line, GH link
+
+**Then — directory PR (no rush, 3-8 week review queue):**
+- Phase 4 checklist below has the full submission steps
+
+---
+
 ## Phase 1 — Repo prep
 
 - [x] Public GitHub repo: `obsidian-frontmatter-readonly`
